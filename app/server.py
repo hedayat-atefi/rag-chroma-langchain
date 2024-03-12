@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from langserve import add_routes
+from rag_chroma import chain as rag_chroma_chain
 
 app = FastAPI()
 
@@ -9,6 +10,7 @@ app = FastAPI()
 async def redirect_root_to_docs():
     return RedirectResponse("/docs")
 
+add_routes(app, rag_chroma_chain, path="/rag-chroma")
 
 # Edit this to add the chain you want to add
 add_routes(app, NotImplemented)
