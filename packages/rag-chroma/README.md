@@ -30,15 +30,15 @@ langchain app add rag-chroma
 ```
 
 And add the following code to your `server.py` file:
+
 ```python
 from rag_chroma import chain as rag_chroma_chain
 
 add_routes(app, rag_chroma_chain, path="/rag-chroma")
 ```
 
-(Optional) Let's now configure LangSmith. 
-LangSmith will help us trace, monitor and debug LangChain applications. 
-LangSmith is currently in private beta, you can sign up [here](https://smith.langchain.com/). 
+(Optional) Let's now configure LangSmith.
+LangSmith will help us trace, monitor and debug LangChain applications.
 If you don't have access, you can skip this section
 
 ```shell
@@ -53,7 +53,7 @@ If you are inside this directory, then you can spin up a LangServe instance dire
 langchain serve
 ```
 
-This will start the FastAPI app with a server is running locally at 
+This will start the FastAPI app with a server is running locally at
 [http://localhost:8000](http://localhost:8000)
 
 We can see all templates at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
@@ -65,4 +65,22 @@ We can access the template from code with:
 from langserve.client import RemoteRunnable
 
 runnable = RemoteRunnable("http://localhost:8000/rag-chroma")
+
+## Ingestion utilities
+
+This package includes a small ingestion helper module and a sample CLI to ingest files or URLs into a Chroma collection.
+
+Quick usage:
+
+```shell
+# install extras (pdf, html parsing)
+pip install -e .[all]
+
+# run the sample ingest script on a local file or URL
+python scripts/ingest_sample.py ./docs/example.md
+python scripts/ingest_sample.py https://example.com/article
 ```
+
+Files supported by the sample script: text (.txt), markdown (.md/.mdx), PDF (.pdf), and HTTP(S) URLs.
+
+See `rag_chroma/ingest.py` for the programmatic API: functions to read documents, chunk them, and upsert into Chroma.
