@@ -1,64 +1,79 @@
-# LangChain Example
+# rag-chroma-langchain
 
-This repository demonstrates an example use of the LangChain library to load documents from the web, split texts, create a vector store, and perform retrieval-augmented generation (RAG) utilizing a large language model (LLM). The example encapsulates a streamlined approach for splitting web-based documents, embedding the splits via OpenAI embeddings, saving those embeddings in a vector store, and then using those embeddings for context-dependent question-answering with a chat model.
+[![PyPI](https://img.shields.io/pypi/v/rag-chroma.svg?label=PyPI)](https://pypi.org/project/rag-chroma) [![Python](https://img.shields.io/pypi/pyversions/rag-chroma.svg)](https://www.python.org/) [![License: MIT](https://img.shields.io/github/license/hedayat-atefi/rag-chroma-langchain.svg)]
 
-## Features
-- Document loading from a URL
-- Recursive character-based document splitting
-- Creating a vector store with Chroma
-- Embedding documents using OpenAI Embeddings
-- Setup of a retrieval-augmented generation (RAG) prompt
-- Integration of a large language model (ChatOpenAI) for answering questions based on context derived from the vector store
+A developer-focused example and template that demonstrates Retrieval-Augmented Generation (RAG) using LangChain, Chroma vector store, and embeddings. The repository includes a small package template (packages/rag-chroma) and top-level examples showing how to ingest documents, build a Chroma collection, and wire a RAG pipeline.
 
-## Requirements
-- Python 3.x
-- [langchain](https://github.com/langchain/langchain) library
-- [langchain_core](https://github.com/langchain/langchain_core) library
+Note: This README is provider-agnostic — it does not assume a single LLM provider. See package docs for provider-specific configuration.
 
-Ensure you have the latest versions of these libraries installed to avoid compatibility issues.
+Features
+- Document loading (URL / file)
+- Document chunking and text splitting
+- Vectorstore creation with Chroma
+- Embedding documents (provider-agnostic — configure your embedding provider)
+- RAG chain scaffolding for context-aware QA
+- A reusable LangChain template package for LangServe / LangChain projects (packages/rag-chroma)
 
-## Installation
+Repository layout
+- README.md — this file
+- packages/rag-chroma/ — reusable template package with chain, ingest utilities, and a small FastAPI-based example
+- scripts/ — ingestion and utility scripts
+- notebooks/ — example notebooks (if present) for exploration and prototyping
+- LICENSE — MIT license
 
-To install the necessary libraries for this example, you can use pip:
+Requirements
+- Python 3.8+
+- pip
+- Recommended: create and use a virtual environment
 
-```bash
-pip install langchain langchain_core
-```
+Core dependencies (examples used in the repo)
+- langchain
+- langchain_core
+- chromadb / chroma client (for Chroma vectorstore)
+- an embeddings provider client (OpenAI, Cohere, etc.) — provider-agnostic approach
 
-## Usage
+Installation
+1. Clone the repo:
+   git clone https://github.com/hedayat-atefi/rag-chroma-langchain.git
+   cd rag-chroma-langchain
 
-The example is structured into several parts: loading documents, splitting texts, creating a vector store, embedding documents, and setting up a RAG chain for context-dependent question answering. Here is a brief outline on how to use each part:
+2. Create a virtual environment and install dependencies:
+   python -m venv .venv
+   source .venv/bin/activate  # macOS / Linux
+   .venv\Scripts\activate     # Windows
 
-### Document Loading
-The example starts by loading a document from a specified URL using `WebBaseLoader`. The loaded document is then split into chunks using `RecursiveCharacterTextSplitter`, which helps in handling large documents by splitting them into manageable sizes.
+3. Install required packages (adjust extras as needed):
+   pip install -U pip
+   pip install -e ".[all]"   # if the repo defines extras for pdf/html parsing, otherwise install core deps: langchain langchain_core chromadb
 
-### Creating a Vector Store
-After splitting, the document chunks are embedded using `OpenAIEmbeddings`, and these embeddings are stored in a `Chroma` vector store. This allows for efficient retrieval of document sections relevant to a particular query.
+Configuration / environment variables
+- Embeddings / LLM provider keys:
+  - Configure your chosen embeddings and LLM provider credentials as environment variables as required by that provider (e.g., OPENAI_API_KEY for OpenAI).
+- Chroma config:
+  - By default, Chroma can create a local collection. If you run a remote Chroma service, set the corresponding connection variables used by the codepath you choose.
+- Optional tracing:
+  - If using LangChain tracing/monitoring (LangSmith), set LANGCHAIN_TRACING_V2, LANGCHAIN_API_KEY, and LANGCHAIN_PROJECT as needed.
 
-### Embedding Single Document
-For testing purposes, embedding a single document and adding it to the vector store is also demonstrated.
+Quick pointers for developers
+- packages/rag-chroma/README.md contains package-specific instructions, including how to integrate the template into a LangChain project and how to run the included LangServe routes.
+- scripts/ contains small CLI utilities to ingest files and URLs into a Chroma collection (supports .txt, .md/.mdx, .pdf, and HTTP(S) URLs).
+- Use the ingestion utilities to upsert documents into a named Chroma collection, then initialize a RAG chain against that collection.
 
-### Retrieval-Augmented Generation (RAG) Chain
-The key feature of this example is setting up a RAG chain that utilizes the previously created vector store to retrieve context relevant to a given question. The chain integrates a prompt template, the ChatOpenAI model for language understanding, and an output parser, facilitating a context-aware question-answering system.
+Testing & development
+- Use your standard tooling (pytest, flake8/ruff, mypy) if tests or linters are added to the repo.
+- Add tests for new features and maintainers should run them before merging changes.
 
-### Running the RAG Chain
-Here's a simple example on how to run the chain:
+Contributing
+- Contributions are welcome. Please follow these guidelines:
+  - Open issues for bugs or feature requests.
+  - Create focused pull requests with descriptive titles and clear change descriptions.
+  - Include tests and documentation for new features where applicable.
+  - Follow existing code style and add type hints where helpful.
 
-```python
-# Assuming the chain is already setup as demonstrated above
-question = Question(__root__="What is LangChain?")
-response = chain.run(question)
-print(response)
-```
+License
+This project is licensed under the MIT License — see the LICENSE file for details.
 
-Ensure that `Question` is properly formatted as expected by the RAG chain.
-
-## Contribution
-
-Contributions to this example are welcome. Please ensure to follow the standard contribution guidelines, including writing tests for new features and documenting your code appropriately.
-
-## License
-
-This example is open-sourced under the MIT License. See the LICENSE file for more details.
-
-**Disclaimer**: This README provides an overview for educational purposes and a starting point for using LangChain and related libraries. The example code and setup instructions are subject to change based on updates to the dependencies and their APIs.
+Further reading and references
+- packages/rag-chroma/README.md — package-specific usage and LangServe integration
+- LangChain docs — https://langchain.com
+- Chroma docs — https://www.trychroma.com
