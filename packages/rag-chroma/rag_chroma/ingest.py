@@ -98,7 +98,12 @@ def read_url(url: str, timeout: int = 10) -> Document:
     resp = requests.get(url, timeout=timeout)
     resp.raise_for_status()
     html = resp.text
-    soup = BeautifulSoup(html, "lxml")
+    # Prefer the faster/stricter 'lxml' parser when available; fall back to
+    # Python's built-in 'html.parser' if it's not installed in the environment.
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
     # Try to extract main textual content (naive)
     main = soup.find("main") or soup.find("article") or soup.body
     content = main.get_text(separator="\n") if main else soup.get_text(separator="\n")
