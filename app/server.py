@@ -12,8 +12,9 @@ async def redirect_root_to_docs():
 
 add_routes(app, rag_chroma_chain, path="/rag-chroma")
 
-# Edit this to add the chain you want to add
-add_routes(app, NotImplemented)
+# If you want to expose additional chains, call add_routes with the chain module.
+# The previous call used NotImplemented which causes a runtime error, so it's removed.
+# Example: add_routes(app, another_chain, path="/other-chain")
 
 if __name__ == "__main__":
     import uvicorn
